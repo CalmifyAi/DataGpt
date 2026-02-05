@@ -5,32 +5,22 @@
 <title>OMNIS AI</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Inter:wght@300;400&display=swap" rel="stylesheet">
-
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 
 body{
-  font-family:'Inter',sans-serif;
+  font-family:Arial, sans-serif;
   background:radial-gradient(circle at top,#2a004f,#05000b);
   color:#eee;
-  overflow-x:hidden;
 }
 
-/* MATRIX BACKGROUND (CLEAN) */
-canvas{
-  position:fixed;
-  inset:0;
-  z-index:-1;
-}
-
-/* GLASS CARD */
+/* GLASS */
 .glass{
-  background:linear-gradient(145deg,rgba(180,120,255,.15),rgba(50,0,90,.35));
-  backdrop-filter:blur(28px);
-  border-radius:30px;
+  background:linear-gradient(145deg,rgba(180,120,255,.18),rgba(60,0,110,.35));
+  backdrop-filter:blur(30px);
+  border-radius:28px;
   border:1px solid rgba(200,160,255,.3);
-  box-shadow:0 0 120px rgba(160,90,255,.4);
+  box-shadow:0 0 120px rgba(160,90,255,.45);
 }
 
 /* HERO */
@@ -48,8 +38,8 @@ nav{
 }
 
 .logo{
-  font-family:'Orbitron',sans-serif;
-  letter-spacing:5px;
+  letter-spacing:4px;
+  font-weight:bold;
   color:#d9b6ff;
 }
 
@@ -57,7 +47,6 @@ nav button{
   background:none;
   border:none;
   color:#ccc;
-  font-size:14px;
   cursor:pointer;
 }
 nav button:hover{color:#d9b6ff}
@@ -69,18 +58,10 @@ nav button:hover{color:#d9b6ff}
   align-items:center;
 }
 
-.hero-text h1{
-  font-family:'Orbitron',sans-serif;
-  font-size:3.4rem;
-}
-.hero-text span{
-  color:#b98cff;
-  text-shadow:0 0 30px #b98cff;
-}
-.hero-text p{
-  margin:25px 0;
-  opacity:.9;
-}
+.hero-text h1{font-size:3.2rem}
+.hero-text span{color:#b98cff}
+.hero-text p{margin:25px 0;opacity:.9}
+
 .hero-text button{
   padding:18px 46px;
   border-radius:50px;
@@ -88,14 +69,32 @@ nav button:hover{color:#d9b6ff}
   background:linear-gradient(135deg,#7b4bff,#c77dff);
   color:white;
   cursor:pointer;
-  font-size:16px;
   box-shadow:0 0 45px rgba(160,90,255,.7);
+}
+
+.hero-ai{
+  position:relative;
 }
 
 .hero-ai img{
   width:100%;
-  border-radius:26px;
-  box-shadow:0 0 120px rgba(160,90,255,.6);
+  border-radius:24px;
+  box-shadow:0 0 100px rgba(160,90,255,.6);
+}
+
+/* HALO */
+.halo{
+  position:absolute;
+  inset:-20px;
+  border-radius:50%;
+  border:3px solid rgba(185,140,255,.6);
+  animation:halo 2.5s linear infinite;
+  display:none;
+}
+
+@keyframes halo{
+  0%{transform:rotate(0deg);opacity:.6}
+  100%{transform:rotate(360deg);opacity:1}
 }
 
 /* APP */
@@ -108,18 +107,22 @@ nav button:hover{color:#d9b6ff}
 
 textarea{
   width:100%;
-  min-height:140px;
-  padding:22px;
-  border-radius:22px;
-  background:rgba(255,255,255,.06);
+  min-height:120px;
+  padding:20px;
+  border-radius:20px;
+  background:rgba(255,255,255,.07);
   border:1px solid rgba(190,140,255,.35);
   color:white;
-  font-size:15px;
   outline:none;
 }
 
+input[type=file]{
+  margin-top:20px;
+  color:#ccc;
+}
+
 .analyze{
-  margin-top:30px;
+  margin-top:25px;
   padding:18px 44px;
   border-radius:40px;
   border:none;
@@ -132,15 +135,33 @@ textarea{
 .result{
   margin-top:40px;
   padding:35px;
-  border-radius:26px;
+  border-radius:24px;
   background:rgba(255,255,255,.06);
+}
+
+/* THINKING */
+.thinking{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  opacity:.85;
+}
+.dot{
+  width:8px;height:8px;border-radius:50%;
+  background:#c77dff;
+  animation:pulse 1.4s infinite;
+}
+.dot:nth-child(2){animation-delay:.2s}
+.dot:nth-child(3){animation-delay:.4s}
+
+@keyframes pulse{
+  0%,80%,100%{opacity:.3}
+  40%{opacity:1}
 }
 </style>
 </head>
 
 <body>
-
-<canvas id="matrix"></canvas>
 
 <div id="hero" class="glass">
   <nav>
@@ -153,43 +174,26 @@ textarea{
 
   <div class="hero-grid">
     <div class="hero-text">
-      <h1>God-Level <span>Artificial Intelligence</span></h1>
-      <p>A cinematic AI system that analyzes any subject with clarity, depth, and intelligence.</p>
+      <h1>AI <span>Analysis System</span></h1>
+      <p>Text and image-based intelligence simulation.</p>
       <button onclick="enter()">GET STARTED</button>
     </div>
     <div class="hero-ai">
+      <div class="halo" id="halo"></div>
       <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=900">
     </div>
   </div>
 </div>
 
 <div id="app" class="glass">
-  <h2>SUBJECT ANALYSIS</h2>
-  <textarea id="input" placeholder="Describe an idea, image, concept, or system..."></textarea>
-  <button class="analyze" onclick="analyze()">RUN AI ANALYSIS</button>
+  <h2>INPUT</h2>
+  <textarea id="input" placeholder="Describe an idea or topic..."></textarea>
+  <input type="file" id="imageInput" accept="image/*">
+  <button class="analyze" onclick="analyze()">ANALYZE</button>
   <div id="output" class="result"></div>
 </div>
 
 <script>
-/* MATRIX (SMOOTH) */
-const c=document.getElementById("matrix"),x=c.getContext("2d");
-c.width=innerWidth;c.height=innerHeight;
-const chars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-const font=16,cols=c.width/font;
-const drops=Array(Math.floor(cols)).fill(1);
-
-setInterval(()=>{
-  x.fillStyle="rgba(0,0,0,.08)";
-  x.fillRect(0,0,c.width,c.height);
-  x.fillStyle="#b98cff";
-  x.font=font+"px monospace";
-  drops.forEach((y,i)=>{
-    x.fillText(chars[Math.random()*chars.length|0],i*font,y*font);
-    drops[i]=y*font>c.height&&Math.random()>0.98?0:y+1;
-  });
-},45);
-
-/* NAV */
 function enter(){
   hero.style.display="none";
   app.style.display="block";
@@ -199,47 +203,36 @@ function home(){
   hero.style.display="block";
 }
 
-/* GOD AI ENGINE */
 function analyze(){
-  const t=input.value.toLowerCase();
-  if(!t)return;
-
-  const topics={
-    technology:["AI","systems","automation","computation"],
-    biology:["life","cells","evolution","neural processes"],
-    space:["cosmos","gravity","time","expansion"],
-    society:["power","culture","economics","collective behavior"],
-    abstract:["patterns","meaning","emergence","structure"]
-  };
-
-  let domain="abstract";
-  if(/ai|code|robot|system/.test(t))domain="technology";
-  else if(/human|brain|dna|health/.test(t))domain="biology";
-  else if(/space|planet|galaxy/.test(t))domain="space";
-  else if(/people|society|economy|culture/.test(t))domain="society";
-
-  const summary=[
-    "This subject demonstrates layered complexity with interconnected elements.",
-    "The concept operates through adaptive and evolving mechanisms.",
-    "Multiple forces interact to create emergent outcomes."
-  ];
-
-  const insights=[
-    "Long-term influence is significant.",
-    "Scalability potential detected.",
-    "System stability appears high.",
-    "Ethical considerations may arise."
-  ];
-
+  halo.style.display="block";
   output.innerHTML=`
-    <h3>AI ANALYSIS COMPLETE</h3>
-    <p><strong>Domain:</strong> ${domain.toUpperCase()}</p>
-    <p><strong>Summary:</strong> ${summary[Math.random()*summary.length|0]}</p>
-    <p><strong>Key Focus:</strong> ${topics[domain].join(", ")}</p>
-    <p><strong>Insight:</strong> ${insights[Math.random()*insights.length|0]}</p>
-    <p><strong>Confidence:</strong> ${(82+Math.random()*16).toFixed(1)}%</p>
-    <p>Status: <span style="color:#7fffba">OPTIMAL</span></p>
+    <div class="thinking">
+      <span>AI is analyzing</span>
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    </div>
   `;
+
+  setTimeout(()=>{
+    halo.style.display="none";
+
+    const text=input.value.toLowerCase();
+    const hasImage=imageInput.files.length>0;
+
+    let vision="";
+    if(hasImage){
+      vision="The uploaded image appears to contain structured visual elements such as shapes, lighting contrast, and focal points. The AI interprets this as a composed scene with intentional design and contextual meaning.";
+    }
+
+    let analysis="This subject represents a conceptual system defined by relationships, structure, and interpretation. Meaning emerges through observation, context, and interaction over time.";
+
+    output.innerHTML=`
+      <h3>AI ANALYSIS COMPLETE</h3>
+      ${hasImage?`<p><strong>Vision Analysis:</strong> ${vision}</p>`:""}
+      ${text?`<p><strong>Concept Analysis:</strong> ${analysis}</p>`:""}
+      <p><strong>Confidence:</strong> ${(86+Math.random()*13).toFixed(1)}%</p>
+      <p>Status: <span style="color:#7fffba">COMPLETE</span></p>
+    `;
+  },1800);
 }
 </script>
 
