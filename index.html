@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Offline AI Comfort Corner</title>
+<style>
+  /* ===== Body ===== */
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    margin:0;
+    padding:0;
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    background: linear-gradient(to bottom, #FFFAF0, #FFE5B4);
+    color:#333;
+  }
+
+  /* ===== Header ===== */
+  header {
+    padding: 15px;
+    text-align:center;
+    background-color:#FF8C42; /* burnt orange header */
+    color:white;
+    font-size:1.8rem;
+    font-weight:bold;
+  }
+
+  /* ===== Chat container ===== */
+  #chatContainer {
+    flex:1;
+    background-color:#FFF5E1; /* light fall background */
+    margin:0;
+    padding:15px;
+    overflow-y:auto;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+
+  /* ===== Messages ===== */
+  .message {
+    padding:12px 18px;
+    border-radius:20px;
+    max-width:75%;
+    word-wrap:break-word;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    font-size:1rem;
+    line-height:1.4;
+    transition: transform 0.2s;
+  }
+
+  .user {
+    background-color:#FFB347; /* golden orange */
+    color:white;
+    align-self:flex-end;
+    border-bottom-right-radius:0;
+  }
+
+  .bot {
+    background-color:#FFE5B4; /* soft peach */
+    align-self:flex-start;
+    border-bottom-left-radius:0;
+  }
+
+  /* ===== Input ===== */
+  #inputContainer {
+    display:flex;
+    padding:10px 15px;
+    background-color:#FFDAB9; /* light peach input area */
+    gap:10px;
+  }
+
+  #userInput {
+    flex:1;
+    padding:12px;
+    border-radius:20px;
+    border:1px solid #FFB347;
+    outline:none;
+    font-size:1rem;
+  }
+
+  button {
+    padding:10px 18px;
+    border:none;
+    border-radius:20px;
+    background-color:#FF8C42; /* burnt orange */
+    color:white;
+    cursor:pointer;
+    font-weight:bold;
+    transition: transform 0.2s, background-color 0.3s;
+  }
+
+  button:hover {
+    transform:scale(1.05);
+    background-color:#FF6F31;
+  }
+
+  audio { display:none; } /* hide audio element */
+</style>
+</head>
+<body>
+
+<header>Offline AI Comfort Corner</header>
+
+<div id="chatContainer"></div>
+
+<div id="inputContainer">
+  <input type="text" id="userInput" placeholder="How are you feeling today?">
+  <button id="sendBtn">Send</button>
+  <button id="dailyBtn">Daily Positivity</button>
+</div>
+
+<audio id="soothingSound" loop>
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const chatContainer = document.getElementById('chatContainer');
+const userInput = document.getElementById('userInput');
+const sendBtn = document.getElementById('sendBtn');
+const dailyBtn = document.getElementById('dailyBtn');
+const sound = document.getElementById('soothingSound');
+
+// Keywords for offline AI responses
+const keywords = {
+  sad: ["It's okay to feel sad. Take a deep breath and remember this feeling will pass.", "Even when you're sad, you're not alone."],
+  lonely: ["You are not alone. Someone cares about you.", "Loneliness is normal. You matter."],
+  anxious: ["Take a moment to breathe. Everything will be okay.", "Focus on small steps; you can handle this."],
+  happy: ["That's wonderful! Enjoy these moments!", "Your happiness is contagious!"]
+};
+
+// Fallback generic messages
+const genericResponses = [
+  "You are strong and capable. Keep going!",
+  "Take a deep breath. You are valued.",
+  "Every feeling is valid. Be kind to yourself.",
+  "Small steps forward are still progress."
+];
+
+// Daily positivity messages
+const dailyMessages = [
+  "Today is a new day full of possibilities.",
+  "Your smile can brighten someone's day today!",
+  "Small steps forward are still progress.",
+  "You are capable of more than you know.",
+  "Take a moment today to appreciate yourself.",
+  "Even tiny joys count. Look for them today.",
+  "Believe in yourself; today you can do something great."
+];
+
+function addMessage(content, sender){
+  const msgDiv = document.createElement('div');
+  msgDiv.classList.add('message', sender);
+  msgDiv.textContent = content;
+  chatContainer.appendChild(msgDiv);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+// Generate dynamic offline AI response
+function getComfortResponse(text){
+  text = text.toLowerCase();
+  for(const key in keywords){
+    if(text.includes(key)){
+      const msgs = keywords[key];
+      return msgs[Math.floor(Math.random() * msgs.length)];
+    }
+  }
+  return genericResponses[Math.floor(Math.random() * genericResponses.length)];
+}
+
+// Send user message
+function sendMessage(){
+  const text = userInput.value.trim();
+  if(!text) return;
+  addMessage(text, 'user');
+  userInput.value = '';
+  addMessage("AI is thinking...", 'bot');
+
+  setTimeout(() => {
+    const response = getComfortResponse(text);
+    chatContainer.lastChild.textContent = response;
+
+    // gentle color shift
+    const hue = Math.floor(Math.random() * 30) + 20; // fall-like hue range
+    document.body.style.background = `linear-gradient(to bottom, hsl(${hue},70%,85%), hsl(${hue},70%,65%))`;
+
+    if(sound.paused) sound.play();
+  }, 500);
+}
+
+// Daily positivity
+function dailyPositivity(){
+  const today = new Date();
+  const dayIndex = today.getDate() % dailyMessages.length;
+  addMessage(dailyMessages[dayIndex], 'bot');
+
+  const hue = Math.floor(Math.random() * 30) + 20; // fall colors
+  document.body.style.background = `linear-gradient(to bottom, hsl(${hue},70%,85%), hsl(${hue},70%,65%))`;
+
+  if(sound.paused) sound.play();
+}
+
+sendBtn.addEventListener('click', sendMessage);
+userInput.addEventListener('keypress', e => { if(e.key==='Enter') sendMessage(); });
+dailyBtn.addEventListener('click', dailyPositivity);
+</script>
+
+</body>
+</html>
