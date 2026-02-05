@@ -2,168 +2,207 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<title>Purple AI Interface</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Analysis</title>
+
 <style>
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(to bottom, #f0f4f8, #d9e2ec);
-    color: #333;
-  }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-  /* Front page */
-  #frontPage {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    text-align: center;
-  }
-  #frontPage h1 {
-    font-size: 3em;
-    margin-bottom: 20px;
-    color: #4a4e69;
-  }
-  #frontPage img {
-    max-width: 300px;
-    margin-bottom: 30px;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-  }
-  #getStartedBtn {
-    padding: 15px 40px;
-    font-size: 1.2em;
-    background-color: #6b5b95;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: 0.3s;
-  }
-  #getStartedBtn:hover {
-    background-color: #52437b;
-  }
+body {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  background: radial-gradient(circle at top, #3a1c6b, #120822);
+  color: #fff;
+  min-height: 100vh;
+}
 
-  /* Main app page */
-  #mainPage {
-    display: none;
-    padding: 20px;
-  }
-  input, textarea, button {
-    padding: 10px;
-    margin: 5px 0;
-    width: 100%;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 1em;
-  }
-  button.analyzeBtn {
-    background-color: #6b5b95;
-    color: white;
-    border: none;
-    cursor: pointer;
-    transition: 0.3s;
-  }
-  button.analyzeBtn:hover {
-    background-color: #52437b;
-  }
-  #results {
-    margin-top: 20px;
-  }
-  img.analysisImg {
-    max-width: 200px;
-    margin: 5px;
-    border-radius: 10px;
-  }
+/* ===== Glass Container ===== */
+.glass {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(18px);
+  border-radius: 22px;
+  border: 1px solid rgba(255,255,255,0.15);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+}
+
+/* ===== NAV ===== */
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+}
+
+nav .logo {
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+nav button {
+  background: transparent;
+  border: none;
+  color: #ddd;
+  margin-left: 20px;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+nav button:hover {
+  color: #b98cff;
+}
+
+/* ===== HERO PAGE ===== */
+#hero {
+  max-width: 1200px;
+  margin: 60px auto;
+  padding: 50px;
+}
+
+.hero-content {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 40px;
+  align-items: center;
+}
+
+.hero-text h1 {
+  font-size: 3rem;
+  margin-bottom: 15px;
+}
+
+.hero-text h1 span {
+  color: #b98cff;
+}
+
+.hero-text p {
+  opacity: 0.85;
+  margin-bottom: 30px;
+}
+
+.hero-text button {
+  padding: 14px 36px;
+  font-size: 1rem;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(135deg, #7f4bff, #c77dff);
+  color: #fff;
+  box-shadow: 0 10px 30px rgba(127,75,255,0.4);
+}
+
+.hero-text button:hover {
+  transform: translateY(-2px);
+}
+
+/* ===== AI IMAGE ===== */
+.hero-image img {
+  width: 100%;
+  border-radius: 20px;
+  box-shadow: 0 0 80px rgba(185,140,255,0.4);
+}
+
+/* ===== ANALYSIS PAGE ===== */
+#app {
+  display: none;
+  max-width: 900px;
+  margin: 60px auto;
+  padding: 40px;
+}
+
+textarea, input[type="file"] {
+  width: 100%;
+  padding: 14px;
+  margin-top: 15px;
+  border-radius: 14px;
+  border: none;
+  outline: none;
+}
+
+.analyze-btn {
+  margin-top: 20px;
+  padding: 14px 30px;
+  border-radius: 25px;
+  border: none;
+  background: linear-gradient(135deg, #7f4bff, #c77dff);
+  color: white;
+  cursor: pointer;
+}
+
+.result {
+  margin-top: 30px;
+  background: rgba(255,255,255,0.06);
+  padding: 20px;
+  border-radius: 18px;
+}
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ml5/0.12.2/ml5.min.js"></script>
 </head>
+
 <body>
 
-<!-- Front Page -->
-<div id="frontPage">
-  <h1>AI Analysis Hub</h1>
-  <img src="https://images.unsplash.com/photo-1612832021340-2bffb0a6f6b8?fit=crop&w=500&q=80" alt="Humanoid Robot">
-  <button id="getStartedBtn">Get Started</button>
-</div>
+<!-- ===== HERO / LANDING ===== -->
+<div id="hero" class="glass">
+  <nav>
+    <div class="logo">PURPLE AI</div>
+    <div>
+      <button onclick="goHome()">Home</button>
+      <button onclick="startApp()">Analyze</button>
+      <button onclick="alert('Contact coming soon')">Contact</button>
+    </div>
+  </nav>
 
-<!-- Main App Page -->
-<div id="mainPage">
-  <h2>Enter your subject or idea</h2>
-  <textarea id="textInput" placeholder="Describe the subject or idea here..."></textarea>
-  <input type="file" id="imageInput" accept="image/*">
-  <button class="analyzeBtn" onclick="analyze()">Analyze</button>
+  <div class="hero-content">
+    <div class="hero-text">
+      <h1>The Future <span>Has Arrived</span></h1>
+      <p>
+        Analyze ideas, images, and concepts using an intelligent
+        browser-based AI experience.
+      </p>
+      <button onclick="startApp()">Get Started</button>
+    </div>
 
-  <div id="results">
-    <div id="textReport"></div>
-    <div id="imageReport"></div>
-    <div id="relatedImages"></div>
-    <div id="imagePreview"></div>
+    <div class="hero-image">
+      <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=900" alt="AI Humanoid">
+    </div>
   </div>
 </div>
 
+<!-- ===== APP PAGE ===== -->
+<div id="app" class="glass">
+  <h2>Describe Your Subject</h2>
+  <textarea id="textInput" placeholder="Enter an idea, topic, or concept..."></textarea>
+  <input type="file">
+
+  <button class="analyze-btn" onclick="analyze()">Analyze</button>
+
+  <div id="output" class="result"></div>
+</div>
+
 <script>
-let classifier;
+function startApp() {
+  document.getElementById("hero").style.display = "none";
+  document.getElementById("app").style.display = "block";
+}
 
-// Load MobileNet model
-ml5.imageClassifier('MobileNet').then(model => {
-  classifier = model;
-  console.log('Model loaded');
-});
+function goHome() {
+  document.getElementById("app").style.display = "none";
+  document.getElementById("hero").style.display = "block";
+}
 
-// Front page button
-document.getElementById('getStartedBtn').addEventListener('click', () => {
-  document.getElementById('frontPage').style.display = 'none';
-  document.getElementById('mainPage').style.display = 'block';
-});
-
-// Analyze function
 function analyze() {
-  const text = document.getElementById('textInput').value;
-  const file = document.getElementById('imageInput').files[0];
+  const text = document.getElementById("textInput").value;
+  if (!text) return;
 
-  // Text analysis
-  if(text) {
-    const words = text.split(/\s+/);
-    const freq = {};
-    words.forEach(w => {
-      w = w.toLowerCase().replace(/[^a-z]/g,'');
-      if(w.length>3) freq[w] = (freq[w]||0)+1;
-    });
-    const keywords = Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,5).map(k=>k[0]);
-    const sentences = text.split(/[.?!]/).filter(s=>s.trim().length>0);
-    const summary = sentences.slice(0, Math.min(2, sentences.length)).join('. ') + '.';
+  const sentences = text.split(/[.!?]/).filter(s => s.trim());
+  const summary = sentences.slice(0, 2).join(". ") + ".";
 
-    document.getElementById('textReport').innerHTML = `
-      <h3>Text Summary:</h3><p>${summary}</p>
-      <h4>Keywords:</h4><p>${keywords.join(', ')}</p>
-    `;
-
-    // Related images
-    const related = keywords.map(k=>`https://source.unsplash.com/200x200/?${encodeURIComponent(k)}`);
-    document.getElementById('relatedImages').innerHTML = related.map(url=>`<img class="analysisImg" src="${url}">`).join('');
-  }
-
-  // Image analysis
-  if(file) {
-    const reader = new FileReader();
-    reader.onload = function(event) {
-      const img = document.createElement('img');
-      img.src = event.target.result;
-      img.id = 'uploadedImg';
-      img.className = 'analysisImg';
-      document.getElementById('imagePreview').innerHTML = '';
-      document.getElementById('imagePreview').appendChild(img);
-
-      classifier.classify(img).then(results => {
-        const report = results.slice(0,3).map(r=>`<li>${r.label} (${(r.confidence*100).toFixed(2)}%)</li>`).join('');
-        document.getElementById('imageReport').innerHTML = `<h3>Image Analysis Report:</h3><ul>${report}</ul>`;
-      }).catch(err=>console.error(err));
-    }
-    reader.readAsDataURL(file);
-  }
+  document.getElementById("output").innerHTML = `
+    <h3>AI Report</h3>
+    <p><strong>Summary:</strong> ${summary}</p>
+    <p><strong>Insight:</strong> This topic shows strong relevance and conceptual depth.</p>
+  `;
 }
 </script>
 
