@@ -1,198 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>OMNIS AI</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-
-body{
-  font-family:Arial, sans-serif;
-  background:radial-gradient(circle at top,#2a004f,#05000b);
-  color:#eee;
-}
-
-/* GLASS */
-.glass{
-  background:linear-gradient(145deg,rgba(180,120,255,.18),rgba(60,0,110,.35));
-  backdrop-filter:blur(30px);
-  border-radius:28px;
-  border:1px solid rgba(200,160,255,.3);
-  box-shadow:0 0 120px rgba(160,90,255,.45);
-}
-
-/* HERO */
-#hero{
-  max-width:1200px;
-  margin:90px auto;
-  padding:60px;
-}
-
-nav{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:50px;
-}
-
-.logo{
-  letter-spacing:4px;
-  font-weight:bold;
-  color:#d9b6ff;
-}
-
-nav button{
-  background:none;
-  border:none;
-  color:#ccc;
-  cursor:pointer;
-}
-nav button:hover{color:#d9b6ff}
-
-.hero-grid{
-  display:grid;
-  grid-template-columns:1.2fr .8fr;
-  gap:50px;
-  align-items:center;
-}
-
-.hero-text h1{font-size:3.2rem}
-.hero-text span{color:#b98cff}
-.hero-text p{margin:25px 0;opacity:.9}
-
-.hero-text button{
-  padding:18px 46px;
-  border-radius:50px;
-  border:none;
-  background:linear-gradient(135deg,#7b4bff,#c77dff);
-  color:white;
-  cursor:pointer;
-  box-shadow:0 0 45px rgba(160,90,255,.7);
-}
-
-.hero-ai{
-  position:relative;
-}
-
-.hero-ai img{
-  width:100%;
-  border-radius:24px;
-  box-shadow:0 0 100px rgba(160,90,255,.6);
-}
-
-/* HALO */
-.halo{
-  position:absolute;
-  inset:-20px;
-  border-radius:50%;
-  border:3px solid rgba(185,140,255,.6);
-  animation:halo 2.5s linear infinite;
-  display:none;
-}
-
-@keyframes halo{
-  0%{transform:rotate(0deg);opacity:.6}
-  100%{transform:rotate(360deg);opacity:1}
-}
-
-/* APP */
-#app{
-  display:none;
-  max-width:900px;
-  margin:90px auto;
-  padding:60px;
-}
-
-textarea{
-  width:100%;
-  min-height:120px;
-  padding:20px;
-  border-radius:20px;
-  background:rgba(255,255,255,.07);
-  border:1px solid rgba(190,140,255,.35);
-  color:white;
-  outline:none;
-}
-
-input[type=file]{
-  margin-top:20px;
-  color:#ccc;
-}
-
-.analyze{
-  margin-top:25px;
-  padding:18px 44px;
-  border-radius:40px;
-  border:none;
-  background:linear-gradient(135deg,#7b4bff,#c77dff);
-  color:white;
-  cursor:pointer;
-  box-shadow:0 0 40px rgba(160,90,255,.7);
-}
-
-.result{
-  margin-top:40px;
-  padding:35px;
-  border-radius:24px;
-  background:rgba(255,255,255,.06);
-}
-
-/* THINKING */
-.thinking{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  opacity:.85;
-}
-.dot{
-  width:8px;height:8px;border-radius:50%;
-  background:#c77dff;
-  animation:pulse 1.4s infinite;
-}
-.dot:nth-child(2){animation-delay:.2s}
-.dot:nth-child(3){animation-delay:.4s}
-
-@keyframes pulse{
-  0%,80%,100%{opacity:.3}
-  40%{opacity:1}
-}
-</style>
-</head>
-
-<body>
-
-<div id="hero" class="glass">
-  <nav>
-    <div class="logo">OMNIS AI</div>
-    <div>
-      <button onclick="home()">HOME</button>
-      <button onclick="enter()">ENTER</button>
-    </div>
-  </nav>
-
-  <div class="hero-grid">
-    <div class="hero-text">
-      <h1>AI <span>Analysis System</span></h1>
-      <p>Text and image-based intelligence simulation.</p>
-      <button onclick="enter()">GET STARTED</button>
-    </div>
-    <div class="hero-ai">
-      <div class="halo" id="halo"></div>
-      <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=900">
-    </div>
-  </div>
-</div>
-
-<div id="app" class="glass">
-  <h2>INPUT</h2>
-  <textarea id="input" placeholder="Describe an idea or topic..."></textarea>
-  <input type="file" id="imageInput" accept="image/*">
-  <button class="analyze" onclick="analyze()">ANALYZE</button>
-  <div id="output" class="result"></div>
-</div>
-
 <script>
 function enter(){
   hero.style.display="none";
@@ -218,23 +23,67 @@ function analyze(){
     const text=input.value.toLowerCase();
     const hasImage=imageInput.files.length>0;
 
-    let vision="";
-    if(hasImage){
-      vision="The uploaded image appears to contain structured visual elements such as shapes, lighting contrast, and focal points. The AI interprets this as a composed scene with intentional design and contextual meaning.";
-    }
+    /* TOPIC DETECTION */
+    let topic="abstract";
+    if(/ai|robot|software|code|algorithm|system|technology/.test(text)) topic="technology";
+    else if(/brain|human|dna|health|biology|life|cell/.test(text)) topic="biology";
+    else if(/space|planet|galaxy|universe|cosmos|star/.test(text)) topic="space";
+    else if(/society|culture|economy|power|people|politics/.test(text)) topic="society";
+    else if(/art|design|music|creative|aesthetic/.test(text)) topic="art";
+    else if(/nature|earth|climate|environment|forest|ocean/.test(text)) topic="nature";
 
-    let analysis="This subject represents a conceptual system defined by relationships, structure, and interpretation. Meaning emerges through observation, context, and interaction over time.";
+    /* PARAGRAPH GENERATOR */
+    const responses = {
+      technology: [
+        "This subject relates to engineered systems designed to process information, automate decisions, or enhance efficiency. It reflects how modern technology evolves through iteration, optimization, and human-driven intent, often reshaping how people interact with the world.",
+        "The topic centers on computational or technological structures that rely on logic, data flow, and system design. Its impact depends on scalability, reliability, and how effectively it integrates with real-world use cases."
+      ],
+      biology: [
+        "This subject appears rooted in biological processes that govern living systems. It reflects adaptation, regulation, and the balance required for survival, shaped by evolution and environmental pressures.",
+        "The topic involves organic mechanisms where structure and function are closely linked. Biological systems tend to be resilient yet sensitive, responding dynamically to internal and external changes."
+      ],
+      space: [
+        "This topic connects to large-scale cosmic systems governed by physics and time. It reflects humanity’s attempt to understand vast, interconnected structures that operate far beyond everyday experience.",
+        "The subject highlights astronomical processes shaped by gravity, energy, and motion. Meaning often emerges through observation, modeling, and long-term study of patterns across space."
+      ],
+      society: [
+        "This subject reflects collective human behavior shaped by culture, economics, and shared systems of organization. Its outcomes depend on cooperation, conflict, and long-term social dynamics.",
+        "The topic centers on how groups structure power, resources, and identity. Social systems evolve as values change and external pressures influence decision-making."
+      ],
+      art: [
+        "This subject relates to creative expression and interpretation. It reflects intentional design choices meant to communicate emotion, meaning, or perspective through form and structure.",
+        "The topic emphasizes aesthetics and human creativity, where value is often subjective and shaped by cultural context, experience, and interpretation."
+      ],
+      nature: [
+        "This subject appears connected to natural systems shaped by balance and environmental interaction. It reflects cycles, interdependence, and long-term sustainability.",
+        "The topic highlights ecological relationships where change in one element influences many others. Natural systems tend to be adaptive but vulnerable to disruption."
+      ],
+      abstract: [
+        "This subject exists as a conceptual system defined by patterns, relationships, and interpretation. Meaning emerges through context rather than fixed structure.",
+        "The topic appears abstract in nature, allowing multiple interpretations depending on perspective, scale, and intent."
+      ]
+    };
+
+    const paragraph = responses[topic][Math.floor(Math.random()*responses[topic].length)];
+
+    let visionText = "";
+    if(hasImage){
+      const visionOptions = [
+        "The uploaded image shows visual structure, contrast, and focal emphasis, suggesting intentional composition.",
+        "The image appears to contain organized visual elements, indicating a subject with contextual or symbolic meaning.",
+        "Visual patterns in the image suggest design, environment, or subject focus rather than randomness."
+      ];
+      visionText = `<p><strong>Vision Analysis:</strong> ${visionOptions[Math.floor(Math.random()*visionOptions.length)]}</p>`;
+    }
 
     output.innerHTML=`
       <h3>AI ANALYSIS COMPLETE</h3>
-      ${hasImage?`<p><strong>Vision Analysis:</strong> ${vision}</p>`:""}
-      ${text?`<p><strong>Concept Analysis:</strong> ${analysis}</p>`:""}
-      <p><strong>Confidence:</strong> ${(86+Math.random()*13).toFixed(1)}%</p>
+      <p><strong>Detected Topic:</strong> ${topic.toUpperCase()}</p>
+      ${visionText}
+      <p>${paragraph}</p>
+      <p><strong>Confidence:</strong> ${(87+Math.random()*12).toFixed(1)}%</p>
       <p>Status: <span style="color:#7fffba">COMPLETE</span></p>
     `;
   },1800);
 }
 </script>
-
-</body>
-</html>
