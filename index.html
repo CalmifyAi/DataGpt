@@ -1,210 +1,160 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Data Ai</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<style>
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  font-family: "Segoe UI", system-ui, sans-serif;
-  background: radial-gradient(circle at top, #3a1c6b, #120822);
-  color: #fff;
-  min-height: 100vh;
-}
-
-/* ===== Glass Container ===== */
-.glass {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(18px);
-  border-radius: 22px;
-  border: 1px solid rgba(255,255,255,0.15);
-  box-shadow: 0 30px 80px rgba(0,0,0,0.4);
-}
-
-/* ===== NAV ===== */
-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 40px;
-}
-
-nav .logo {
-  font-weight: 700;
-  letter-spacing: 1px;
-}
-
-nav button {
-  background: transparent;
-  border: none;
-  color: #ddd;
-  margin-left: 20px;
-  cursor: pointer;
-  font-size: 0.95rem;
-}
-
-nav button:hover {
-  color: #b98cff;
-}
-
-/* ===== HERO PAGE ===== */
-#hero {
-  max-width: 1200px;
-  margin: 60px auto;
-  padding: 50px;
-}
-
-.hero-content {
-  display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  gap: 40px;
-  align-items: center;
-}
-
-.hero-text h1 {
-  font-size: 3rem;
-  margin-bottom: 15px;
-}
-
-.hero-text h1 span {
-  color: #b98cff;
-}
-
-.hero-text p {
-  opacity: 0.85;
-  margin-bottom: 30px;
-}
-
-.hero-text button {
-  padding: 14px 36px;
-  font-size: 1rem;
-  border-radius: 30px;
-  border: none;
-  cursor: pointer;
-  background: linear-gradient(135deg, #7f4bff, #c77dff);
-  color: #fff;
-  box-shadow: 0 10px 30px rgba(127,75,255,0.4);
-}
-
-.hero-text button:hover {
-  transform: translateY(-2px);
-}
-
-/* ===== AI IMAGE ===== */
-.hero-image img {
-  width: 100%;
-  border-radius: 20px;
-  box-shadow: 0 0 80px rgba(185,140,255,0.4);
-}
-
-/* ===== ANALYSIS PAGE ===== */
-#app {
-  display: none;
-  max-width: 900px;
-  margin: 60px auto;
-  padding: 40px;
-}
-
-textarea, input[type="file"] {
-  width: 100%;
-  padding: 14px;
-  margin-top: 15px;
-  border-radius: 14px;
-  border: none;
-  outline: none;
-}
-
-.analyze-btn {
-  margin-top: 20px;
-  padding: 14px 30px;
-  border-radius: 25px;
-  border: none;
-  background: linear-gradient(135deg, #7f4bff, #c77dff);
-  color: white;
-  cursor: pointer;
-}
-
-.result {
-  margin-top: 30px;
-  background: rgba(255,255,255,0.06);
-  padding: 20px;
-  border-radius: 18px;
-}
-</style>
-</head>
-
-<body>
-
-<!-- ===== HERO / LANDING ===== -->
-<div id="hero" class="glass">
-  <nav>
-    <div class="logo">Data Analazation</div>
-    <div>
-      <button onclick="goHome()">Home</button>
-      <button onclick="startApp()">Analyze</button>
-      <button onclick="alert('Contact coming soon')">Contact</button>
-    </div>
-  </nav>
-
-  <div class="hero-content">
-    <div class="hero-text">
-      <h1>The Future <span>Has Arrived</span></h1>
-      <p>
-        Analyze ideas, images, and concepts using an intelligent
-        browser-based AI experience.
-      </p>
-      <button onclick="startApp()">Get Started</button>
-    </div>
-
-    <div class="hero-image">
-      <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=900" alt="AI Humanoid">
-    </div>
-  </div>
-</div>
-
-<!-- ===== APP PAGE ===== -->
-<div id="app" class="glass">
-  <h2>Describe Your Subject</h2>
-  <textarea id="textInput" placeholder="Enter an idea, topic, or concept..."></textarea>
-  <input type="file">
-
-  <button class="analyze-btn" onclick="analyze()">Analyze</button>
-
-  <div id="output" class="result"></div>
-</div>
-
 <script>
-function startApp() {
-  document.getElementById("hero").style.display = "none";
-  document.getElementById("app").style.display = "block";
+/* =========================
+   AUDIO BOOT + AI VOICE
+========================= */
+function bootSound() {
+  const ctx = new AudioContext();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = "sawtooth";
+  osc.frequency.setValueAtTime(80, ctx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(420, ctx.currentTime + 1.2);
+  gain.gain.setValueAtTime(0.15, ctx.currentTime);
+  osc.connect(gain).connect(ctx.destination);
+  osc.start();
+  osc.stop(ctx.currentTime + 1.2);
 }
 
-function goHome() {
-  document.getElementById("app").style.display = "none";
-  document.getElementById("hero").style.display = "block";
+function speak(text) {
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate = 0.9 + Math.random() * 0.2;
+  u.pitch = 0.8 + Math.random() * 0.4;
+  speechSynthesis.speak(u);
 }
 
+/* =========================
+   MATRIX RAIN
+========================= */
+const matrixCanvas = document.getElementById("matrix");
+const mtx = matrixCanvas.getContext("2d");
+matrixCanvas.width = innerWidth;
+matrixCanvas.height = innerHeight;
+
+const chars = "アカサタナABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+const size = 16;
+const columns = matrixCanvas.width / size;
+const drops = Array.from({ length: columns }).fill(1);
+
+function matrix() {
+  mtx.fillStyle = "rgba(0,0,0,0.08)";
+  mtx.fillRect(0,0,matrixCanvas.width,matrixCanvas.height);
+  mtx.fillStyle = "#b98cff";
+  mtx.font = size + "px monospace";
+  drops.forEach((y,i)=>{
+    const t = chars[Math.floor(Math.random()*chars.length)];
+    mtx.fillText(t, i*size, y*size);
+    drops[i] = y*size > matrixCanvas.height && Math.random()>0.975 ? 0 : y+1;
+  });
+}
+setInterval(matrix, 45);
+
+/* =========================
+   THINKING BAR
+========================= */
+function thinkingBar(cb) {
+  let p = 0;
+  output.innerHTML = `<h3>INITIALIZING AI CORE</h3><div id="bar"></div>`;
+  const bar = document.getElementById("bar");
+  bar.style.height = "8px";
+  bar.style.background = "#7f4bff";
+  bar.style.width = "0%";
+  bar.style.transition = "width 0.3s";
+
+  const phases = [
+    "Parsing input",
+    "Detecting patterns",
+    "Cross-referencing signals",
+    "Synthesizing insight"
+  ];
+
+  let i = 0;
+  const timer = setInterval(()=>{
+    p += Math.random()*18;
+    bar.style.width = Math.min(p,100)+"%";
+    if(p > i*25 && i < phases.length) {
+      output.innerHTML += `<p>${phases[i++]}</p>`;
+    }
+    if(p >= 100) {
+      clearInterval(timer);
+      cb();
+    }
+  }, 350);
+}
+
+/* =========================
+   AI ENGINE
+========================= */
+const AI = {
+  domains: {
+    tech: /ai|robot|code|system|software/,
+    bio: /brain|human|dna|health|biology/,
+    space: /space|planet|galaxy|universe/,
+    social: /society|economy|culture|people/
+  },
+  responses: {
+    tech: [
+      "System architecture displays adaptive intelligence.",
+      "Algorithmic efficiency is a dominant signal.",
+      "Recursive optimization potential detected."
+    ],
+    bio: [
+      "Organic systems show self-regulating behavior.",
+      "Feedback loops dominate biological processes.",
+      "Adaptive evolution detected."
+    ],
+    space: [
+      "Cosmic-scale forces govern system behavior.",
+      "Temporal distances exceed human intuition.",
+      "Observation constraints reduce certainty."
+    ],
+    social: [
+      "Emergent behavior shapes collective outcomes.",
+      "Feedback amplification detected.",
+      "Stability varies with external pressure."
+    ],
+    abstract: [
+      "Concept operates on symbolic abstraction.",
+      "Meaning varies by observer.",
+      "Multi-layer interpretation detected."
+    ]
+  },
+  analyze(text) {
+    let domain = "abstract";
+    for (const d in this.domains) {
+      if (this.domains[d].test(text)) domain = d;
+    }
+
+    const words = [...new Set(text.split(/\W+/).filter(w=>w.length>4))];
+    return {
+      domain,
+      insight: this.responses[domain][Math.floor(Math.random()*this.responses[domain].length)],
+      keywords: words.slice(0,5),
+      confidence: (80 + Math.random()*19).toFixed(1)
+    };
+  }
+};
+
+/* =========================
+   FINAL ANALYZE
+========================= */
 function analyze() {
-  const text = document.getElementById("textInput").value;
+  const text = input.value;
   if (!text) return;
 
-  const sentences = text.split(/[.!?]/).filter(s => s.trim());
-  const summary = sentences.slice(0, 2).join(". ") + ".";
+  bootSound();
+  thinkingBar(()=>{
+    const r = AI.analyze(text);
 
-  document.getElementById("output").innerHTML = `
-    <h3>AI Report</h3>
-    <p><strong>Summary:</strong> ${summary}</p>
-    <p><strong>Insight:</strong> This topic shows strong relevance and conceptual depth.</p>
-  `;
+    output.innerHTML = `
+      <h3>AI CORE ONLINE</h3>
+      <p><strong>Domain:</strong> ${r.domain.toUpperCase()}</p>
+      <p><strong>Keywords:</strong> ${r.keywords.join(", ") || "General patterns"}</p>
+      <p><strong>Insight:</strong> ${r.insight}</p>
+      <p><strong>Confidence:</strong> ${r.confidence}%</p>
+      <p>Status: <span style="color:#7fffba">STABLE</span></p>
+    `;
+
+    speak(`Analysis complete. Domain ${r.domain}. Confidence ${r.confidence} percent.`);
+  });
 }
 </script>
-
-</body>
-</html>
