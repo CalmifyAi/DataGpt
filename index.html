@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>EnergiAI</title>
+  <title>EnergiAI - Real-Time Energy Optimizer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body { margin:0; font-family:Arial,sans-serif; background:linear-gradient(135deg,#f8fafc,#eef2f7); color:#111827; }
@@ -32,7 +32,7 @@
 
 <header>
   <nav>
-    <div>EnergiAI</div>
+    <div>⚡ EnergiAI</div>
     <div>
       <span id="navFeatures">Features</span>
       <span id="navHow">How it Works</span>
@@ -95,6 +95,7 @@ const ctx = chartEl.getContext('2d');
 let tracking = false;
 let devices = JSON.parse(localStorage.getItem('devices') || '[]');
 let totalKwh = 0;
+let totalSavings = Number(localStorage.getItem('totalSavings') || 0);
 
 function defaultDevice() {
   return { name: 'New Device', watts: 100, kwh: 0, cost: 0 };
@@ -122,6 +123,7 @@ addDeviceBtn.onclick = () => {
   devices.push(defaultDevice());
   saveDevices();
   renderDevices();
+renderSavings();
 };
 
 function startTracking() {
@@ -133,17 +135,27 @@ function startTracking() {
 
 function autoOptimize() {
   let optimized = false;
+  const price = parseFloat(priceEl.value);
+
   devices.forEach(d => {
     if (d.watts > 300) {
-      const old = d.watts;
+      const oldWatts = d.watts;
       d.watts = Math.round(d.watts * 0.85);
+
+      const hourlySavings = ((oldWatts - d.watts) / 1000) * price;
+      totalSavings += hourlySavings;
+
       optimized = true;
-      addTip(`AI reduced ${d.name} from ${old}W → ${d.watts}W`);
+      addTip(`AI reduced ${d.name} from ${oldWatts}W → ${d.watts}W`);
     }
   });
+
   if (!optimized) addTip('AI found no high-energy devices to optimize.');
+
+  localStorage.setItem('totalSavings', totalSavings.toFixed(2));
   saveDevices();
   renderDevices();
+  renderSavings();
 }
 
 
@@ -161,7 +173,8 @@ function trackUsage() {
   totalKwh = dailyKwh;
   usage.textContent = (dailyKwh * 24).toFixed(2);
   cost.textContent = (dailyKwh * price * 24).toFixed(2);
-  savings.textContent = ((dailyKwh * price * 24) * 0.22).toFixed(2);
+
+  renderSavings();
 
   saveDevices();
   renderDevices();
@@ -191,7 +204,6 @@ document.getElementById('learnBtn').onclick = () => {
 // Auto optimization button
 document.getElementById('optimizeBtn').onclick = () => {
   autoOptimize();
-};
 };
 
 renderDevices();
