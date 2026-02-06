@@ -1,258 +1,182 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>OMNIS AI</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{
-  font-family:Arial,sans-serif;
-  background:radial-gradient(circle at top,#2a004f,#05000b);
-  color:#eee;
-}
-
-/* GLASS CARD */
-.glass{
-  background:linear-gradient(145deg,rgba(180,120,255,.18),rgba(60,0,110,.35));
-  backdrop-filter:blur(30px);
-  border-radius:28px;
-  border:1px solid rgba(200,160,255,.3);
-  box-shadow:0 0 120px rgba(160,90,255,.45);
-}
-
-/* HERO */
-#hero{
-  max-width:1200px;
-  margin:90px auto;
-  padding:60px;
-}
-
-nav{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:50px;
-}
-
-.logo{
-  letter-spacing:4px;
-  font-weight:bold;
-  color:#d9b6ff;
-}
-
-nav button{
-  background:none;
-  border:none;
-  color:#ccc;
-  cursor:pointer;
-}
-nav button:hover{color:#d9b6ff}
-
-.hero-grid{
-  display:grid;
-  grid-template-columns:1.2fr .8fr;
-  gap:50px;
-  align-items:center;
-}
-
-.hero-text h1{font-size:3.2rem}
-.hero-text span{color:#b98cff}
-.hero-text p{margin:25px 0;opacity:.9}
-
-.hero-text button{
-  padding:18px 46px;
-  border-radius:50px;
-  border:none;
-  background:linear-gradient(135deg,#7b4bff,#c77dff);
-  color:white;
-  cursor:pointer;
-  box-shadow:0 0 45px rgba(160,90,255,.7);
-}
-
-.hero-ai{
-  position:relative;
-}
-.hero-ai img{
-  width:100%;
-  border-radius:24px;
-  box-shadow:0 0 100px rgba(160,90,255,.6);
-}
-
-/* HALO */
-.halo{
-  position:absolute;
-  inset:-20px;
-  border-radius:50%;
-  border:3px solid rgba(185,140,255,.6);
-  animation:halo 2.5s linear infinite;
-  display:none;
-}
-@keyframes halo{
-  0%{transform:rotate(0deg);opacity:.6}
-  100%{transform:rotate(360deg);opacity:1}
-}
-
-/* APP */
-#app{
-  display:none;
-  max-width:900px;
-  margin:90px auto;
-  padding:60px;
-}
-
-textarea{
-  width:100%;
-  min-height:120px;
-  padding:20px;
-  border-radius:20px;
-  background:rgba(255,255,255,.07);
-  border:1px solid rgba(190,140,255,.35);
-  color:white;
-  outline:none;
-}
-
-input[type=file]{
-  margin-top:20px;
-  color:#ccc;
-}
-
-.analyze{
-  margin-top:25px;
-  padding:18px 44px;
-  border-radius:40px;
-  border:none;
-  background:linear-gradient(135deg,#7b4bff,#c77dff);
-  color:white;
-  cursor:pointer;
-  box-shadow:0 0 40px rgba(160,90,255,.7);
-}
-
-.result{
-  margin-top:40px;
-  padding:35px;
-  border-radius:24px;
-  background:rgba(255,255,255,.06);
-}
-
-/* THINKING */
-.thinking{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  opacity:.85;
-}
-.dot{
-  width:8px;height:8px;border-radius:50%;
-  background:#c77dff;
-  animation:pulse 1.4s infinite;
-}
-.dot:nth-child(2){animation-delay:.2s}
-.dot:nth-child(3){animation-delay:.4s}
-@keyframes pulse{
-  0%,80%,100%{opacity:.3}
-  40%{opacity:1}
-}
-</style>
+  <meta charset="UTF-8" />
+  <title>Real‑Time Energy Usage Optimizer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #f8fafc, #eef2f7);
+      color: #111827;
+    }
+    header {
+      padding: 28px 20px;
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: center;
+    }
+    h1 { margin: 0; font-size: 2rem; }
+    main {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+    }
+    .card h2 { margin-top: 0; }
+    label { margin-top: 14px; display:block; font-size:0.9rem; }
+    input, select { margin-top:4px; }
+    .value { font-weight:bold; }
+    .metric {
+      display:flex;
+      justify-content:space-between;
+      margin:10px 0;
+      font-size:1rem;
+    }
+    canvas { width:100%; height:240px; }
+    .saving { color:#16a34a; font-weight:bold; font-size:1.1rem; }
+    footer { text-align:center; font-size:0.8rem; color:#6b7280; padding:30px; }
+    @media (max-width:900px){ main{grid-template-columns:1fr;} }
+  </style>
 </head>
 <body>
 
-<div id="hero" class="glass">
-  <nav>
-    <div class="logo">OMNIS AI</div>
-    <div>
-      <button onclick="home()">HOME</button>
-      <button onclick="enter()">ENTER</button>
+<header>
+  <nav style="display:flex;justify-content:space-between;align-items:center;max-width:1200px;margin:0 auto;">
+    <div style="font-weight:700;font-size:1.2rem;">⚡ EnergiAI</div>
+    <div style="display:flex;gap:20px;font-size:0.9rem;opacity:0.9;">
+      <span>Features</span>
+      <span>How it Works</span>
+      <span>Pricing</span>
     </div>
   </nav>
-
-  <div class="hero-grid">
-    <div class="hero-text">
-      <h1>AI <span>Analysis System</span></h1>
-      <p>Text and image-based intelligence simulation.</p>
-      <button onclick="enter()">GET STARTED</button>
-    </div>
-    <div class="hero-ai">
-      <div class="halo" id="halo"></div>
-      <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=900">
+  <div style="max-width:1200px;margin:60px auto 20px;text-align:left;">
+    <h1 style="font-size:2.8rem;max-width:520px;">Your Personal Energy Intelligence Platform</h1>
+    <p style="max-width:520px;opacity:0.85;">Optimize home energy usage in real time using private, local AI — no smart meters, no cloud, no tracking.</p>
+    <div style="margin-top:24px;display:flex;gap:14px;">
+      <button style="padding:12px 20px;border-radius:999px;border:none;background:#2563eb;color:white;font-weight:600;">Start Optimizing</button>
+      <button style="padding:12px 20px;border-radius:999px;border:1px solid #e5e7eb;background:white;">Learn More</button>
     </div>
   </div>
-</div>
+</header>
 
-<div id="app" class="glass">
-  <h2>INPUT</h2>
-  <textarea id="input" placeholder="Describe any idea, topic, or image..."></textarea>
-  <input type="file" id="imageInput" accept="image/*">
-  <button class="analyze" onclick="analyze()">ANALYZE</button>
-  <div id="output" class="result"></div>
-</div>
+<main>
+  <div class="card">
+    <h2>AI Optimization Output</h2>
+    <div class="metric"><span>Estimated Usage</span><strong><span id="usage">–</span> kWh/day</strong></div>
+    <div class="metric"><span>Estimated Cost</span><strong>$<span id="cost">–</span>/day</strong></div>
+    <div class="metric saving"><span>Potential Savings</span>$<span id="savings">–</span>/month</div>
+
+    <h3>Energy Pattern (24h)</h3>
+    <canvas id="chart"></canvas>
+
+    <h3>Smart Suggestions</h3>
+    <ul id="tips"></ul>
+  </div>
+</main>
+
+<footer>
+  Runs entirely in your browser using heuristic AI logic.<br />
+  No data leaves your device.
+</footer>
 
 <script>
-function enter(){hero.style.display="none";app.style.display="block";}
-function home(){app.style.display="none";hero.style.display="block";}
+  const devices = document.getElementById('devices');
+  const hvac = document.getElementById('hvac');
+  const priceEl = document.getElementById('price');
+  const sizeEl = document.getElementById('size');
+  const timeEl = document.getElementById('time');
+  const chartEl = document.getElementById('chart');
 
-const topicResponses={
-  technology:[
-    "This technology represents a complex system designed for intelligent adaptation, automation, and optimization. Its structure allows for evolving behaviors and dynamic problem-solving, demonstrating advanced logic and layered computation.",
-    "A highly adaptive technological framework emerges here, combining automated decision-making with recursive learning patterns to achieve scalable outcomes in unpredictable environments."
-  ],
-  biology:[
-    "This biological concept explores how living systems maintain balance through adaptive feedback loops, evolution, and complex interactions among cells and organs.",
-    "The subject highlights the interdependence of organisms and environments, illustrating emergent behaviors and self-regulating mechanisms inherent in life."
-  ],
-  space:[
-    "This cosmic analysis examines the structure and behavior of celestial systems, from planetary dynamics to galactic interactions, revealing underlying patterns across vast distances.",
-    "The topic reflects universal forces shaping matter and energy, illustrating both predictable and emergent phenomena within the cosmos."
-  ],
-  society:[
-    "This social construct demonstrates collective behaviors influenced by culture, economics, and governance. Patterns emerge from individual decisions and systemic interactions.",
-    "Human systems reveal trends, hierarchies, and adaptations shaped by societal pressures, demonstrating both stability and dynamic change over time."
-  ],
-  abstract:[
-    "This abstract concept examines patterns, relationships, and emergent phenomena. Its meaning depends on context, perspective, and interpretation.",
-    "The subject embodies complex interconnections and layered structures, encouraging multiple interpretations based on scale and observation."
-  ]
-};
+  devices.oninput = () => devicesVal.textContent = devices.value;
+  hvac.oninput = () => hvacVal.textContent = hvac.value + '%';
 
-function analyze(){
-  halo.style.display="block";
-  output.innerHTML=`
-    <div class="thinking">
-      <span>AI is analyzing</span>
-      <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-    </div>
-  `;
+  const inputs = document.querySelectorAll('input, select');
+  inputs.forEach(i => i.addEventListener('input', calculate));
 
-  setTimeout(()=>{
-    halo.style.display="none";
-    const text=input.value.toLowerCase();
-    const hasImage=imageInput.files.length>0;
+  const ctx = chartEl.getContext('2d');
 
-    let domain="abstract";
-    if(/ai|robot|code|system/.test(text)) domain="technology";
-    else if(/human|brain|dna|health|cell/.test(text)) domain="biology";
-    else if(/space|planet|galaxy|universe/.test(text)) domain="space";
-    else if(/society|economy|culture|people/.test(text)) domain="society";
+  function calculate() {
+    const price = parseFloat(priceEl.value);
+    const size = parseInt(sizeEl.value);
+    const dev = parseInt(devices.value);
+    const hv = parseInt(hvac.value);
+    const time = timeEl.value;
 
-    // Random paragraph selection per topic
-    const paragraphs=topicResponses[domain];
-    const para=paragraphs[Math.floor(Math.random()*paragraphs.length)];
+    let baseUsage = size * 0.012 + dev * 0.8;
+    let hvacLoad = hv * 0.15;
+    let timeMultiplier = time === 'peak' ? 1.25 : time === 'mid' ? 1.1 : 0.9;
 
-    let vision="";
-    if(hasImage){
-      vision="The uploaded image contains structured visual elements and patterns. The AI interprets composition, contrast, and focal areas to generate contextual understanding.";
+    let dailyUsage = (baseUsage + hvacLoad) * timeMultiplier;
+    let optimizedUsage = dailyUsage * 0.78;
+    let dailyCost = dailyUsage * price;
+    let monthlySavings = (dailyUsage - optimizedUsage) * price * 30;
+
+    usage.textContent = dailyUsage.toFixed(1);
+    cost.textContent = dailyCost.toFixed(2);
+    savings.textContent = monthlySavings.toFixed(2);
+
+    storeHistory(dailyUsage);
+    renderChart(dailyUsage, optimizedUsage);
+    generateTips(dev, hv, time, dailyUsage);
+  }
+
+  function storeHistory(value) {
+    let history = JSON.parse(localStorage.getItem('energyHistory') || '[]');
+    history.push({ value, date: Date.now() });
+    if (history.length > 7) history.shift();
+    localStorage.setItem('energyHistory', JSON.stringify(history));
+  }
+
+  function renderChart(actual, optimized) {
+    ctx.clearRect(0, 0, chartEl.width, chartEl.height);
+    const hours = 24;
+    const barWidth = chartEl.width / hours;
+
+    for (let i = 0; i < hours; i++) {
+      const noise = Math.random() * 0.3 + 0.85;
+      const hActual = actual / hours * noise * 40;
+      const hOpt = optimized / hours * noise * 40;
+
+      ctx.fillStyle = '#e5e7eb';
+      ctx.fillRect(i * barWidth, chartEl.height - hActual, barWidth - 2, hActual);
+
+      ctx.fillStyle = '#16a34a';
+      ctx.fillRect(i * barWidth, chartEl.height - hOpt, barWidth - 6, hOpt);
+    }
+  }
+
+  function generateTips(dev, hv, time, usageVal) {
+    tips.innerHTML = '';
+
+    const history = JSON.parse(localStorage.getItem('energyHistory') || '[]');
+    if (history.length >= 2) {
+      const diff = history[history.length - 2].value - usageVal;
+      if (diff > 0) addTip(`Your usage improved by ${diff.toFixed(1)} kWh since last session.`);
     }
 
-    output.innerHTML=`
-      <h3>AI ANALYSIS COMPLETE</h3>
-      ${hasImage?`<p><strong>Vision Analysis:</strong> ${vision}</p>`:""}
-      ${text?`<p><strong>Concept Analysis:</strong> ${para}</p>`:""}
-      <p><strong>Confidence:</strong> ${(85+Math.random()*15).toFixed(1)}%</p>
-      <p>Status: <span style="color:#7fffba">COMPLETE</span></p>
-    `;
-  },2000);
-}
+    if (time === 'peak') addTip('Shift heavy usage to off-peak hours for instant savings.');
+    if (hv > 70) addTip('Lower HVAC by 5–10% to reduce energy spikes.');
+    if (dev > 10) addTip('Use smart power strips to cut standby energy.');
+    addTip('AI recommends spreading high-load tasks across the day.');
+  }
+
+  function addTip(text) {
+    const li = document.createElement('li');
+    li.textContent = text;
+    tips.appendChild(li);
+  }
+
+  calculate();
 </script>
 
 </body>
